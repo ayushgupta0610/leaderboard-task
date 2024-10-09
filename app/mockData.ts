@@ -3,7 +3,7 @@ interface User {
   username: string;
   totalGames: number;
   volume: number;
-  gamesLast24h: number;
+  games24h: number;
   avatar: string;
 }
 
@@ -13,7 +13,7 @@ const generateMockUsers = (count: number): User[] => {
     username: `User${i + 1}`,
     totalGames: Math.floor(Math.random() * 2000) + 100,
     volume: parseFloat((Math.random() * 5).toFixed(2)),
-    gamesLast24h: Math.floor(Math.random() * 200),
+    games24h: Math.floor(Math.random() * 200),
     avatar: "/placeholder-avatar.png", // Replace with an actual placeholder image
   }));
 };

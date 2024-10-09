@@ -5,7 +5,7 @@ import Image from "next/image";
 
 interface User {
   id: number;
-  name: string;
+  username: string;
   avatar: string;
   totalGames: number;
   volume: number;
@@ -16,11 +16,12 @@ export default function AllTimeLeaderboard() {
   const [currentPage, setCurrentPage] = useState(1);
   const [usersAllTime, setUsersAllTime] = useState<User[]>([]);
   const [totalPages, setTotalPages] = useState(1);
+  const [totalRecords, setTotalRecords] = useState(0);
 
   useEffect(() => {
     const fetchUsers = async () => {
       const res = await fetch(
-        `http://localhost:3000/api/leaderboard/all-time?currentPage=${currentPage}`,
+        `http://localhost:3000/api/leaderboard/all-time?currentPage=${currentPage}&usersPerPage=7`,
         { cache: "no-store" }
       );
       if (!res.ok) throw new Error("Failed to fetch data");
@@ -28,6 +29,7 @@ export default function AllTimeLeaderboard() {
       console.log("Data fetched for all time leaderboard", data);
       setUsersAllTime(data.users);
       setTotalPages(data.totalPages);
+      setTotalRecords(data.totalRecords);
     };
     fetchUsers();
   }, [currentPage]);
@@ -55,12 +57,12 @@ export default function AllTimeLeaderboard() {
                     <span className="text-indigo-300 mr-2">{index + 1}.</span>
                     <Image
                       src={user.avatar}
-                      alt={user.name}
+                      alt={user.username}
                       width={32}
                       height={32}
                       className="rounded-full mr-2"
                     />
-                    <span className="text-white">{user.name}</span>
+                    <span className="text-white">{user.username}</span>
                   </td>
                   <td className="py-3 text-indigo-300">{user.totalGames}</td>
                   <td className="py-3 text-cyan-300">{user.volume} SOL</td>
@@ -93,11 +95,12 @@ export default function AllTimeLeaderboard() {
             <div>
               <p className="text-sm text-indigo-300">
                 Showing{" "}
-                <span className="font-medium">{currentPage - 1 + 1}</span> to{" "}
+                <span className="font-medium">{(currentPage - 1) * 7 + 1}</span>{" "}
+                to{" "}
                 <span className="font-medium">
-                  {Math.min(currentPage, totalPages)}
+                  {Math.min(currentPage * 7, totalRecords)}
                 </span>{" "}
-                of <span className="font-medium">{totalPages}</span> results
+                of <span className="font-medium">{totalRecords}</span> results
               </p>
             </div>
             <div>
