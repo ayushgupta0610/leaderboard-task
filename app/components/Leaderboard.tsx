@@ -10,6 +10,7 @@ import Paper from "@mui/material/Paper";
 import TableFooter from "@mui/material/TableFooter";
 import TablePagination from "@mui/material/TablePagination";
 import Avatar from "@mui/material/Avatar"; // Import Avatar component
+import { Sort } from "@mui/icons-material"; // Import Sort icon for sorting
 
 interface User {
   id: number;
@@ -23,6 +24,8 @@ interface User {
 interface LeaderboardProps {
   apiEndpoint: string;
   title: string;
+  defaultSortField?: string; // Add default sort field prop
+  defaultSortOrder?: "asc" | "desc"; // Add default sort order prop
 }
 
 export default function Leaderboard({ apiEndpoint, title }: LeaderboardProps) {
@@ -31,6 +34,8 @@ export default function Leaderboard({ apiEndpoint, title }: LeaderboardProps) {
   //   const [totalPages, setTotalPages] = useState(1);
   const [totalRecords, setTotalRecords] = useState(0);
   const [usersPerPage, setUsersPerPage] = useState(7);
+  const [sortField, setSortField] = useState<string>("totalGames"); // Default sort field
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc"); // Default sort order
 
   const handleChangePage = (
     event: React.MouseEvent<HTMLButtonElement> | null,
@@ -46,12 +51,19 @@ export default function Leaderboard({ apiEndpoint, title }: LeaderboardProps) {
     setCurrentPage(0);
   };
 
+  const handleSortChange = (field: string) => {
+    const newOrder =
+      sortField === field && sortOrder === "asc" ? "desc" : "asc";
+    setSortField(field);
+    setSortOrder(newOrder);
+  };
+
   useEffect(() => {
     const fetchUsers = async () => {
       const res = await fetch(
         `${apiEndpoint}?currentPage=${
           currentPage + 1
-        }&usersPerPage=${usersPerPage}`,
+        }&usersPerPage=${usersPerPage}&sortField=${sortField}&sortOrder=${sortOrder}`,
         { cache: "no-store" }
       );
       if (!res.ok) throw new Error("Failed to fetch data");
@@ -62,7 +74,7 @@ export default function Leaderboard({ apiEndpoint, title }: LeaderboardProps) {
       setUsersPerPage(data.usersPerPage);
     };
     fetchUsers();
-  }, [currentPage, usersPerPage, apiEndpoint]);
+  }, [currentPage, usersPerPage, apiEndpoint, sortField, sortOrder]);
 
   return (
     <TableContainer component={Paper}>
@@ -70,11 +82,23 @@ export default function Leaderboard({ apiEndpoint, title }: LeaderboardProps) {
       <Table sx={{ minWidth: 480 }} aria-label="leaderboard table">
         <TableHead>
           <TableRow>
-            <TableCell align="center">Rank</TableCell>
+            <TableCell align="center">S.No.</TableCell>
             <TableCell align="center">User</TableCell>
-            <TableCell align="right">Total Games</TableCell>
-            <TableCell align="right">Volume</TableCell>
-            <TableCell align="right">24h Games</TableCell>
+            <TableCell
+              align="right"
+              onClick={() => handleSortChange("totalGames")}
+            >
+              Total Games <Sort />
+            </TableCell>
+            <TableCell align="right" onClick={() => handleSortChange("volume")}>
+              Volume <Sort />
+            </TableCell>
+            <TableCell
+              align="right"
+              onClick={() => handleSortChange("games24h")}
+            >
+              24h Games <Sort />
+            </TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
