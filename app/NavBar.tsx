@@ -8,7 +8,7 @@ const NavBar = () => {
       {/* <Link href="/" className="mr-5">
         Solana Shuffle
       </Link> */}
-      <Link href="/24hr" className="text-white mr-4">
+      <Link href="/24hr" className="text-white">
         24hr Leaderboard
       </Link>
       <Link href="/all-time" className="text-white">

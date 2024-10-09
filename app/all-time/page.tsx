@@ -1,7 +1,14 @@
 "use client";
 import { useState, useEffect } from "react";
-import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/20/solid";
-import Image from "next/image";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import Paper from "@mui/material/Paper";
+import TableFooter from "@mui/material/TableFooter";
+import TablePagination from "@mui/material/TablePagination";
 
 interface User {
   id: number;
@@ -13,16 +20,34 @@ interface User {
 }
 
 export default function AllTimeLeaderboard() {
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(0);
   const [usersAllTime, setUsersAllTime] = useState<User[]>([]);
   const [totalPages, setTotalPages] = useState(1);
   const [totalRecords, setTotalRecords] = useState(0);
-  const [usersPerPage, setUsersPerPage] = useState(0);
+  const [usersPerPage, setUsersPerPage] = useState(7);
+
+  const handleChangePage = (
+    event: React.MouseEvent<HTMLButtonElement> | null,
+    newPage: number
+  ) => {
+    console.log("New page", newPage);
+    setCurrentPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    console.log("Rows per page", event.target.value);
+    setUsersPerPage(parseInt(event.target.value, 10));
+    setCurrentPage(0);
+  };
 
   useEffect(() => {
     const fetchUsers = async () => {
       const res = await fetch(
-        `http://localhost:3000/api/leaderboard/all-time?currentPage=${currentPage}&usersPerPage=7`,
+        `http://localhost:3000/api/leaderboard/all-time?currentPage=${
+          currentPage + 1
+        }&usersPerPage=${usersPerPage}`,
         { cache: "no-store" }
       );
       if (!res.ok) throw new Error("Failed to fetch data");
@@ -37,107 +62,80 @@ export default function AllTimeLeaderboard() {
   }, [currentPage]);
 
   return (
-    <div className="bg-indigo-900 min-h-screen p-8">
-      <div className="max-w-3xl mx-auto bg-indigo-800 rounded-lg overflow-hidden shadow-xl">
-        <div className="p-6">
-          <h2 className="text-2xl font-bold text-cyan-300 mb-4">
-            TOP USERS BY ALL-TIME VOLUME
-          </h2>
-          <table className="w-full">
-            <thead>
-              <tr className="text-indigo-300 text-left">
-                <th className="py-2">User</th>
-                <th className="py-2">Total Games</th>
-                <th className="py-2">Volume</th>
-                <th className="py-2">24h Games</th>
-              </tr>
-            </thead>
-            <tbody>
-              {usersAllTime?.map((user, index) => (
-                <tr key={user.id} className="border-t border-indigo-700">
-                  <td className="py-3 flex items-center">
-                    <span className="text-indigo-300 mr-2">{index + 1}.</span>
-                    <Image
-                      src={user.avatar}
-                      alt={user.username}
-                      width={32}
-                      height={32}
-                      className="rounded-full mr-2"
-                    />
-                    <span className="text-white">{user.username}</span>
-                  </td>
-                  <td className="py-3 text-indigo-300">{user.totalGames}</td>
-                  <td className="py-3 text-cyan-300">{user.volume} SOL</td>
-                  <td className="py-3 text-indigo-300">{user.games24h}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-        <div className="bg-indigo-900 px-4 py-3 flex items-center justify-between border-t border-indigo-800 sm:px-6">
-          <div className="flex-1 flex justify-between sm:hidden">
-            <button
-              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-              disabled={currentPage === 1}
-              className="relative inline-flex items-center px-4 py-2 border border-indigo-700 text-sm font-medium rounded-md text-indigo-300 bg-indigo-800 hover:bg-indigo-700"
+    <TableContainer component={Paper}>
+      <Table sx={{ minWidth: 480 }} aria-label="simple table">
+        <TableHead>
+          <TableRow>
+            <TableCell align="right"></TableCell>
+            <TableCell align="right">User</TableCell>
+            <TableCell align="right">Total Game&nbsp;</TableCell>
+            <TableCell align="right">Volume&nbsp;</TableCell>
+            <TableCell align="right">24h Games&nbsp;</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {usersAllTime.map((user) => (
+            <TableRow
+              key={user.id}
+              sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
             >
-              Previous
-            </button>
-            <button
-              onClick={() =>
-                setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-              }
-              disabled={currentPage === totalPages}
-              className="ml-3 relative inline-flex items-center px-4 py-2 border border-indigo-700 text-sm font-medium rounded-md text-indigo-300 bg-indigo-800 hover:bg-indigo-700"
-            >
-              Next
-            </button>
-          </div>
-          <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
-            <div>
-              <p className="text-sm text-indigo-300">
-                Showing{" "}
-                <span className="font-medium">
-                  {(currentPage - 1) * usersPerPage + 1}
-                </span>{" "}
-                to{" "}
-                <span className="font-medium">
-                  {Math.min(currentPage * usersPerPage, totalRecords)}
-                </span>{" "}
-                of <span className="font-medium">{totalRecords}</span> results
-              </p>
-            </div>
-            <div>
-              <nav
-                className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px"
-                aria-label="Pagination"
-              >
-                <button
-                  onClick={() =>
-                    setCurrentPage((prev) => Math.max(prev - 1, 1))
-                  }
-                  disabled={currentPage === 1}
-                  className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-indigo-700 bg-indigo-800 text-sm font-medium text-indigo-300 hover:bg-indigo-700"
+              <TableCell align="center">{user.id}</TableCell>
+
+              <TableCell align="right" component="th" scope="row">
+                {user.username}
+              </TableCell>
+              <TableCell align="right">{user.totalGames}</TableCell>
+              <TableCell align="right">
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "flex-end",
+                  }}
                 >
-                  <span className="sr-only">Previous</span>
-                  <ChevronLeftIcon className="h-5 w-5" aria-hidden="true" />
-                </button>
-                {/* Add page numbers here if needed */}
-                <button
-                  onClick={() =>
-                    setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-                  }
-                  disabled={currentPage === totalPages}
-                  className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-indigo-700 bg-indigo-800 text-sm font-medium text-indigo-300 hover:bg-indigo-700"
-                >
-                  <span className="sr-only">Next</span>
-                  <ChevronRightIcon className="h-5 w-5" aria-hidden="true" />
-                </button>
-              </nav>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+                  <img
+                    src="/images/solana.jpeg"
+                    alt="Solana Icon"
+                    style={{
+                      width: "20px",
+                      height: "20px",
+                      marginRight: "5px",
+                    }}
+                  />
+                  {user.volume} SOL
+                </div>
+              </TableCell>
+              <TableCell align="right">{user.games24h}</TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+        <TableFooter>
+          <TableRow>
+            <TablePagination
+              rowsPerPageOptions={[
+                7,
+                10,
+                { label: "All", value: totalRecords },
+              ]}
+              colSpan={3}
+              count={totalRecords}
+              rowsPerPage={usersPerPage}
+              page={currentPage}
+              slotProps={{
+                select: {
+                  inputProps: {
+                    "aria-label": "rows per page",
+                  },
+                  native: true,
+                },
+              }}
+              onPageChange={handleChangePage}
+              onRowsPerPageChange={handleChangeRowsPerPage}
+              //   ActionsComponent={TablePaginationActions}
+            />
+          </TableRow>
+        </TableFooter>
+      </Table>
+    </TableContainer>
   );
 }
