@@ -13,5 +13,3 @@ pnpm i && pnpm dev
 ```
 
 Open [24 Hour Leaderboard](http://localhost:3000/24hr) or [All Time Leaderboard](http://localhost:3000/all-time) with your browser to see the 24 hour or All time leaderboard respectively.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
