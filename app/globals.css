@@ -1,27 +1,30 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-/* 
-body {
-  @apply bg-indigo-950;
-} */
-
-:root {
-  --foreground-rgb: 0, 0, 0;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 0, 0, 0; /* Changed to black */
-  }
-}
 
 body {
-  color: rgb(var(--foreground-rgb));
+  @apply bg-background text-white;
 }
 
 @layer base {
-  h1 {
-    @apply font-extrabold text-2xl mb-3;
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-bold;
+  }
+}
+
+@layer components {
+  .btn {
+    @apply px-4 py-2 rounded-md font-medium transition-colors;
+  }
+  .btn-primary {
+    @apply bg-primary text-white hover:bg-primary/80;
+  }
+  .btn-secondary {
+    @apply bg-surface text-secondary border border-border hover:bg-surface/80;
   }
 }

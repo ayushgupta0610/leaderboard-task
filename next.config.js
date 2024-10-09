@@ -7,7 +7,7 @@ const nextConfig = {
     //     hostname: "bit.ly",
     //   },
     // ],
-    domains: ["your-image-domain.com"],
+    domains: ["api.dicebear.com"],
   },
 };
 

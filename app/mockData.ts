@@ -14,7 +14,7 @@ const generateMockUsers = (count: number): User[] => {
     totalGames: Math.floor(Math.random() * 2000) + 100,
     volume: parseFloat((Math.random() * 5).toFixed(2)),
     games24h: Math.floor(Math.random() * 200),
-    avatar: "/placeholder-avatar.png", // Replace with an actual placeholder image
+    avatar: `/images/placeholder-avatar.png`, // Replace with an actual placeholder image
   }));
 };
 

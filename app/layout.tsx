@@ -1,4 +1,7 @@
 import NavBar from "@/app/NavBar";
+import { Inter } from "next/font/google";
+
+const inter = Inter({ subsets: ["latin"] });
 
 export default async function RootLayout({
   children,
@@ -6,7 +9,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" className={inter.className}>
       <body>
         <NavBar />
         {children}
