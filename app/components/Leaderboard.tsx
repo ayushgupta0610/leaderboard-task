@@ -9,6 +9,7 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import TableFooter from "@mui/material/TableFooter";
 import TablePagination from "@mui/material/TablePagination";
+import Avatar from "@mui/material/Avatar"; // Import Avatar component
 
 interface User {
   id: number;
@@ -27,7 +28,7 @@ interface LeaderboardProps {
 export default function Leaderboard({ apiEndpoint, title }: LeaderboardProps) {
   const [currentPage, setCurrentPage] = useState(0);
   const [users, setUsers] = useState<User[]>([]);
-  const [totalPages, setTotalPages] = useState(1);
+  //   const [totalPages, setTotalPages] = useState(1);
   const [totalRecords, setTotalRecords] = useState(0);
   const [usersPerPage, setUsersPerPage] = useState(7);
 
@@ -56,7 +57,7 @@ export default function Leaderboard({ apiEndpoint, title }: LeaderboardProps) {
       if (!res.ok) throw new Error("Failed to fetch data");
       const data = await res.json();
       setUsers(data.users);
-      setTotalPages(data.totalPages);
+      //   setTotalPages(data.totalPages);
       setTotalRecords(data.totalRecords);
       setUsersPerPage(data.usersPerPage);
     };
@@ -69,8 +70,8 @@ export default function Leaderboard({ apiEndpoint, title }: LeaderboardProps) {
       <Table sx={{ minWidth: 480 }} aria-label="leaderboard table">
         <TableHead>
           <TableRow>
-            <TableCell align="right">Rank</TableCell>
-            <TableCell align="right">User</TableCell>
+            <TableCell align="center">Rank</TableCell>
+            <TableCell align="center">User</TableCell>
             <TableCell align="right">Total Games</TableCell>
             <TableCell align="right">Volume</TableCell>
             <TableCell align="right">24h Games</TableCell>
@@ -85,7 +86,22 @@ export default function Leaderboard({ apiEndpoint, title }: LeaderboardProps) {
               <TableCell align="center">
                 {currentPage * usersPerPage + index + 1}
               </TableCell>
-              <TableCell align="right" component="th" scope="row">
+              <TableCell
+                align="center"
+                component="th"
+                scope="row"
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  width: "100%", // Ensure full width
+                }}
+              >
+                <Avatar
+                  src={user.avatar || "/images/placeholder-avatar.png"}
+                  alt={user.username}
+                  style={{ marginRight: "8px" }}
+                />
                 {user.username}
               </TableCell>
               <TableCell align="right">{user.totalGames}</TableCell>
