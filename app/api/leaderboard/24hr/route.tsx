@@ -8,6 +8,7 @@ export async function GET(request: Request) {
     url.searchParams.get("usersPerPage") || "7",
     10
   );
+  console.log("usersPerPage: ", usersPerPage);
   const offset = (currentPage - 1) * usersPerPage;
 
   const paginatedUsers = users24h.slice(offset, offset + usersPerPage);

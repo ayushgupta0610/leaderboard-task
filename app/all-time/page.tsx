@@ -17,6 +17,7 @@ export default function AllTimeLeaderboard() {
   const [usersAllTime, setUsersAllTime] = useState<User[]>([]);
   const [totalPages, setTotalPages] = useState(1);
   const [totalRecords, setTotalRecords] = useState(0);
+  const [usersPerPage, setUsersPerPage] = useState(0);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -30,6 +31,7 @@ export default function AllTimeLeaderboard() {
       setUsersAllTime(data.users);
       setTotalPages(data.totalPages);
       setTotalRecords(data.totalRecords);
+      setUsersPerPage(data.usersPerPage);
     };
     fetchUsers();
   }, [currentPage]);
@@ -95,10 +97,12 @@ export default function AllTimeLeaderboard() {
             <div>
               <p className="text-sm text-indigo-300">
                 Showing{" "}
-                <span className="font-medium">{(currentPage - 1) * 7 + 1}</span>{" "}
+                <span className="font-medium">
+                  {(currentPage - 1) * usersPerPage + 1}
+                </span>{" "}
                 to{" "}
                 <span className="font-medium">
-                  {Math.min(currentPage * 7, totalRecords)}
+                  {Math.min(currentPage * usersPerPage, totalRecords)}
                 </span>{" "}
                 of <span className="font-medium">{totalRecords}</span> results
               </p>

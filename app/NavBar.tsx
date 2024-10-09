@@ -5,9 +5,9 @@ import React from "react";
 const NavBar = () => {
   return (
     <div className="flex mb-5 bg-slate-200 p-3 space-x-3">
-      <Link href="/" className="mr-5">
+      {/* <Link href="/" className="mr-5">
         Solana Shuffle
-      </Link>
+      </Link> */}
       <Link href="/24hr" className="text-white mr-4">
         24hr Leaderboard
       </Link>
