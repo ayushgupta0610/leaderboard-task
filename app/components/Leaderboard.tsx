@@ -24,18 +24,27 @@ interface User {
 interface LeaderboardProps {
   apiEndpoint: string;
   title: string;
-  defaultSortField?: string; // Add default sort field prop
+  defaultSortField?: "totalGames" | "games24h" | "volume"; // Add default sort field prop
   defaultSortOrder?: "asc" | "desc"; // Add default sort order prop
 }
 
-export default function Leaderboard({ apiEndpoint, title }: LeaderboardProps) {
+export default function Leaderboard({
+  apiEndpoint,
+  title,
+  defaultSortOrder,
+  defaultSortField,
+}: LeaderboardProps) {
   const [currentPage, setCurrentPage] = useState(0);
   const [users, setUsers] = useState<User[]>([]);
   //   const [totalPages, setTotalPages] = useState(1);
   const [totalRecords, setTotalRecords] = useState(0);
   const [usersPerPage, setUsersPerPage] = useState(7);
-  const [sortField, setSortField] = useState<string>("totalGames"); // Default sort field
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc"); // Default sort order
+  const [sortField, setSortField] = useState<string>(
+    defaultSortField || "volume"
+  ); // Default sort field
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">(
+    defaultSortOrder || "desc"
+  ); // Default sort order
 
   const handleChangePage = (
     event: React.MouseEvent<HTMLButtonElement> | null,
@@ -74,7 +83,7 @@ export default function Leaderboard({ apiEndpoint, title }: LeaderboardProps) {
       setUsersPerPage(data.usersPerPage);
     };
     fetchUsers();
-  }, [currentPage, usersPerPage, apiEndpoint, sortField, sortOrder]);
+  }, [currentPage, usersPerPage, sortField, sortOrder]);
 
   return (
     <TableContainer component={Paper}>

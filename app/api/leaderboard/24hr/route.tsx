@@ -9,7 +9,7 @@ export async function GET(request: Request) {
     10
   );
   const sortField = url.searchParams.get("sortField") || "games24h"; // Default sort field
-  const sortOrder = url.searchParams.get("sortOrder") || "asc"; // Default sort order
+  const sortOrder = url.searchParams.get("sortOrder") || "desc"; // Default sort order
   const offset = (currentPage - 1) * usersPerPage;
 
   // Sorting logic
