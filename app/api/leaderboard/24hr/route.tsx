@@ -14,8 +14,8 @@ export async function GET(request: Request) {
 
   // Sorting logic
   const sortedUsers = [...users24h].sort((a, b) => {
-    const aValue = a[sortField];
-    const bValue = b[sortField];
+    const aValue = a[sortField as keyof typeof a];
+    const bValue = b[sortField as keyof typeof b];
     if (sortOrder === "asc") {
       return aValue > bValue ? 1 : -1;
     } else {
