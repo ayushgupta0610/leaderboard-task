@@ -11,21 +11,14 @@ import TableFooter from "@mui/material/TableFooter";
 import TablePagination from "@mui/material/TablePagination";
 import Avatar from "@mui/material/Avatar"; // Import Avatar component
 import { Sort } from "@mui/icons-material"; // Import Sort icon for sorting
-
-interface User {
-  id: number;
-  username: string;
-  avatar: string;
-  totalGames: number;
-  volume: number;
-  games24h: number;
-}
+import { User, LeaderboardData } from "../types";
 
 interface LeaderboardProps {
   apiEndpoint: string;
   title: string;
   defaultSortField?: "totalGames" | "games24h" | "volume"; // Add default sort field prop
   defaultSortOrder?: "asc" | "desc"; // Add default sort order prop
+  initialData?: LeaderboardData; // Add initial data prop
 }
 
 export default function Leaderboard({
@@ -33,18 +26,23 @@ export default function Leaderboard({
   title,
   defaultSortOrder,
   defaultSortField,
+  initialData, // Accept initial data prop
 }: LeaderboardProps) {
   const [currentPage, setCurrentPage] = useState(0);
-  const [users, setUsers] = useState<User[]>([]);
-  //   const [totalPages, setTotalPages] = useState(1);
-  const [totalRecords, setTotalRecords] = useState(0);
-  const [usersPerPage, setUsersPerPage] = useState(7);
+  const [users, setUsers] = useState<User[]>(initialData?.users || []); // Use initial data if available
+  const [totalRecords, setTotalRecords] = useState(
+    initialData?.totalRecords || 0
+  );
+  const [usersPerPage, setUsersPerPage] = useState(
+    initialData?.usersPerPage || 7
+  );
   const [sortField, setSortField] = useState<string>(
     defaultSortField || "volume"
   ); // Default sort field
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">(
     defaultSortOrder || "desc"
   ); // Default sort order
+  const [initialFetch, setInitialFetch] = useState(false);
 
   const handleChangePage = (
     event: React.MouseEvent<HTMLButtonElement> | null,
@@ -69,6 +67,11 @@ export default function Leaderboard({
 
   useEffect(() => {
     const fetchUsers = async () => {
+      // Only fetch if initialData is not provided
+      if (initialData && !initialFetch) {
+        setInitialFetch(true);
+        return; // Skip fetching if initialData is populated
+      }
       const res = await fetch(
         `${apiEndpoint}?currentPage=${
           currentPage + 1
@@ -78,7 +81,6 @@ export default function Leaderboard({
       if (!res.ok) throw new Error("Failed to fetch data");
       const data = await res.json();
       setUsers(data.users);
-      //   setTotalPages(data.totalPages);
       setTotalRecords(data.totalRecords);
       setUsersPerPage(data.usersPerPage);
     };
