@@ -1,8 +1,10 @@
 import Leaderboard from "../components/Leaderboard";
 import { LeaderboardData } from "../types";
 
+const ALL_TIME_ENDPOINT = "http://localhost:3000/api/leaderboard/all-time";
+
 export default async function AllTimeLeaderboard() {
-  const res = await fetch("http://localhost:3000/api/leaderboard/all-time", {
+  const res = await fetch(ALL_TIME_ENDPOINT, {
     cache: "no-store", // Ensure fresh data
   });
   if (!res.ok) throw new Error("Failed to fetch data");
@@ -10,7 +12,7 @@ export default async function AllTimeLeaderboard() {
 
   return (
     <Leaderboard
-      apiEndpoint="http://localhost:3000/api/leaderboard/all-time"
+      apiEndpoint={ALL_TIME_ENDPOINT}
       title="All-Time Leaderboard"
       defaultSortField="totalGames" // Set default sort field
       defaultSortOrder="desc" // Set default sort order

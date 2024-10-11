@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { usersAllTime } from "../../../mockData";
+import { getLeaderboardData } from "../utils"; // Import the reusable function
 
+// This function is called when a GET request is made to /api/leaderboard/all-time
 export async function GET(request: Request) {
   const url = new URL(request.url);
   const currentPage = parseInt(url.searchParams.get("currentPage") || "1", 10);
@@ -10,28 +12,14 @@ export async function GET(request: Request) {
   );
   const sortField = url.searchParams.get("sortField") || "totalGames"; // Default sort field
   const sortOrder = url.searchParams.get("sortOrder") || "desc"; // Default sort order
-  const offset = (currentPage - 1) * usersPerPage;
 
-  // Sorting logic
-  const sortedUsers = [...usersAllTime].sort((a, b) => {
-    const aValue = a[sortField as keyof typeof a];
-    const bValue = b[sortField as keyof typeof b];
-    if (sortOrder === "asc") {
-      return aValue > bValue ? 1 : -1;
-    } else {
-      return aValue < bValue ? 1 : -1;
-    }
-  });
-
-  const paginatedUsers = sortedUsers.slice(offset, offset + usersPerPage);
-  const totalPages = Math.ceil(sortedUsers.length / usersPerPage);
-  const totalRecords = sortedUsers.length;
-  const allTimeLeaderboard = {
-    users: paginatedUsers,
+  const allTimeLeaderboard = getLeaderboardData(
+    usersAllTime,
     currentPage,
     usersPerPage,
-    totalPages,
-    totalRecords,
-  };
+    sortField,
+    sortOrder
+  );
+
   return NextResponse.json(allTimeLeaderboard);
 }
